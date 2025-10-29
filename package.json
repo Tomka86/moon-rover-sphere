@@ -2,9 +2,9 @@
   "name": "moon-rover-sphere",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/rover.js",
   "scripts": {
-    "test": "mocha \"test/**/*.test.js\"",
+  "test": "node --experimental-vm-modules ./node_modules/mocha/bin/mocha.js",
     "test:watch": "mocha \"test/**/*.test.js\" --watch --reporter spec"
   },
   "keywords": [],

@@ -1,8 +1,11 @@
-
-
 const LEFT  = { N: 'W', W: 'S', S: 'E', E: 'N' };
 const RIGHT = { N: 'E', E: 'S', S: 'W', W: 'N' };
-const STEP  = { N: { dx: 0, dy: -1 }, E: { dx: 1, dy: 0 }, S: { dx: 0, dy: 1 }, W: { dx: -1, dy: 0 } };
+const STEP = {
+  N: { dx: 0, dy: 1 },   
+  E: { dx: 1, dy: 0 },
+  S: { dx: 0, dy: -1 },  
+  W: { dx: -1, dy: 0 }
+};
 
 export class Rover {
   constructor({ x, y, heading, width, height, obstacles = [] }) {
@@ -19,11 +22,29 @@ export class Rover {
     return { x: this.x, y: this.y, heading: this.heading };
   }
 
-
   move(delta) {
     const s = STEP[this.heading];
-    const nx = (this.x + delta * s.dx + this.W) % this.W;
-    const ny = (this.y + delta * s.dy + this.H) % this.H;
+    let nx = this.x + delta * s.dx;
+    let ny = this.y + delta * s.dy;
+
+
+    nx = (nx % this.W + this.W) % this.W;
+
+ 
+    if (this.heading === 'N' && ny >= this.H) {
+      ny = 0;
+      this.heading = 'S';
+      nx = (nx + Math.floor(this.W / 2)) % this.W;
+    } else if (this.heading === 'S' && ny < 0) {
+      ny = this.H - 1;
+      this.heading = 'N';
+      nx = (nx + Math.floor(this.W / 2)) % this.W;
+    } else {
+
+      if (ny < 0) ny = 0;
+      if (ny >= this.H) ny = this.H - 1;
+    }
+
     return { nx, ny };
   }
 
@@ -38,7 +59,7 @@ export class Rover {
       } else if (c === 'f' || c === 'b') {
         const { nx, ny } = this.move(c === 'f' ? +1 : -1);
 
-        
+       
         const key = `${nx},${ny}`;
         if (this.obstacles.has(key)) {
           this.obstacleReport = `obstacle at (${nx},${ny})`;
@@ -47,13 +68,13 @@ export class Rover {
 
         this.x = nx;
         this.y = ny;
-      } else {
-       
       }
+      
     }
 
     return { ...this.state(), obstacle: this.obstacleReport };
   }
 }
+
 
 
